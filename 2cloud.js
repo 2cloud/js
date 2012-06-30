@@ -142,21 +142,67 @@ twocloud.links.mark_read = function(user, device, link, callback) {
         twocloud.links.update(user, device, link, null, true, callback);
 };
 
+// TODO: Not implemented in API yet
 twocloud.links.remove = function(user, device, link, callback) {
 };
 
 twocloud.sessions.url = function(callback_url) {
-        url = "/sessions?callback=" + escape(callback);
+        url = twocloud.hosts.api + "/sessions?callback=" + escape(callback_url);
         return url;
 };
 
 twocloud.users.create = function(identifier, username, email, given_name, family_name, stripe_token, callback) {
+	url = "/users";
+	data = {};
+	data["id"] = identifier;
+	data["username"] = username;
+	data["email"] = email;
+	if(stripe_token != null) {
+		data["stripe_token"] = stripe_token;
+	}
+	if(given_name == null) {
+		given_name = "";
+	}
+	if(family_name == null) {
+		family_name = "";
+	}
+	data["given_name"] = given_name;
+	data["family_name"] = family_name;
+	data = JSON.stringify(data);
+	twocloud._post(url, data, callback);
 };
 
 twocloud.users.get = function(username, callback) {
+	twocloud._get("/users/" + username, null, callback);
 };
 
 twocloud.users.update = function(username, email, reset_secret, given_name, family_name, admin, email_verification, stripe_token, callback) {
+	url = "/users/" + username;
+	params = {};
+	if(email != null) {
+		params["email"] = email;
+	}
+	if(reset_secret) {
+		params["reset_secret"] = reset_secret;
+	}
+	if(given_name != null) {
+		params["given_name"] = given_name;
+	}
+	if(family_name != null) {
+		params["family_name"] = family_name;
+	}
+	if(admin != null) {
+		params["is_admin"] = admin;
+		params["update_admin"] = true;
+	}
+	if(email_verification != null) {
+		params["email_verification"] = email_verification;
+	}
+	if(stripe_token != null) {
+		params["stripe_token"] = stripe_token;
+	}
+	params = JSON.stringify(params);
+	twocloud._put(url, params, callback);
 };
 
 twocloud.users.verify_email = function(username, code, callback) {
@@ -171,23 +217,65 @@ twocloud.users.make_admin = function(username, callback) {
         twocloud.users.update(username, null, false, null, null, true, null, null, callback);
 };
 
+// TODO: Not implemented in API yet
 twocloud.users.remove = function(username, callback) {
 };
 
 twocloud.users.welcome = function(username, message, callback) {
+	url = "/users/" + username + "/welcome";
+	params = {
+		"message": message
+	};
+	params = JSON.stringify(params);
+	twocloud._post(url, params, callback);
 };
 
 twocloud.devices.add = function(username, name, platform, callback) {
+	url = "/users/" + username + "/devices";
+	data = {};
+	data["platform"] = platform;
+	data["name"] = name;
+	data = JSON.stringify(data);
+	twocloud._post(url, data, callback);
 };
 
-twocloud.devices.list = function(username, limit, callback) {
+twocloud.devices.list = function(username, callback) {
+	twocloud._get("/users/" + username + "/devices", {}, callback);
 };
 
 twocloud.devices.get = function(username, device, callback) {
+	twocloud._get("/users/" + username + "/devices/" + device, {}, callback);
 };
 
-twocloud.devices.update = function(username, device, name, callback) {
+twocloud.devices.update = function(username, device, name, platform, callback) {
+	url = "/users/" + username + "/devices/" + device;
+	data = {};
+	if(name != null) {
+		data["name"] = name;
+	}
+	if(platform != null) {
+		data["platform"] = platform;
+	}
+	data = JSON.stringify(data);
+	twocloud._put(url, data, callback);
 };
 
-twocloud.devices.remove = function(username, device) {
+// TODO: Not implemented in API yet
+twocloud.devices.remove = function(username, device, callback) {
+};
+
+// TODO: Not implemented in API yet
+twocloud.messages.list = function(username, callback) {
+};
+
+// TODO: Not implemented in API yet
+twocloud.messages.send = function(username, body, persistent, callback) {
+};
+
+// TODO: Not implemented in API yet
+twocloud.messages.broadcast = function(body, persistent, callback) {
+};
+
+// TODO: Not implemented in API yet
+twocloud.messages.remove = function(username, message, callback) {
 };
